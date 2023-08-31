@@ -24,11 +24,17 @@ public class StrategyDetail {
     // 策略ID
     private Long strategyId;
 
+    // 奖品名称
+    private String awardName;
+
     // 奖品ID
     private String awardId;
 
     // 奖品数量
     private Integer awardCount;
+
+    // 奖品剩余数量
+    private Integer awardSurplusCount;
 
     // 中奖概率
     private BigDecimal awardRate;

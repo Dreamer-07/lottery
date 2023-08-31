@@ -92,17 +92,19 @@ public class StrategyRepository implements IStrategyRepository {
         // 获取相关的策略配置
         StrategyDetail strategyDetail = strategyDetailDao.selectOne(
                 Wrappers.<StrategyDetail>lambdaQuery()
-                        .select(StrategyDetail::getAwardCount)
+                        .select(StrategyDetail::getAwardSurplusCount)
                         .eq(StrategyDetail::getStrategyId, strategyId)
                         .eq(StrategyDetail::getAwardId, awardId)
         );
+
+        strategyDetail.setAwardSurplusCount(strategyDetail.getAwardSurplusCount() - 1);
 
         return 1 == strategyDetailDao.update(
                 strategyDetail,
                 Wrappers.<StrategyDetail>lambdaQuery()
                         .eq(StrategyDetail::getStrategyId, strategyId)
                         .eq(StrategyDetail::getAwardId, awardId)
-                        .gt(StrategyDetail::getAwardCount, 0)
+                        .gt(StrategyDetail::getAwardSurplusCount, 0)
         );
     }
 }

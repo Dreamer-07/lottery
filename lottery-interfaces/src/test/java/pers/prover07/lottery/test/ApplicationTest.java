@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pers.prover07.lottery.domain.strategy.model.req.DrawReq;
+import pers.prover07.lottery.domain.strategy.model.res.DrawRes;
 import pers.prover07.lottery.domain.strategy.service.draw.IDrawExec;
 
 /**
@@ -25,8 +26,10 @@ public class ApplicationTest {
 
     @Test
     public void test_drawExec() {
-        drawExec.doDrawExec(new DrawReq("测试1号", 10001L));
-        drawExec.doDrawExec(new DrawReq("测试2号", 10001L));
+        DrawRes drawRes = drawExec.doDrawExec(new DrawReq("测试1号", 10001L));
+        System.out.println(drawRes);
+        DrawRes drawRes1 = drawExec.doDrawExec(new DrawReq("测试2号", 10001L));
+        System.out.println(drawRes1);
     }
 
 

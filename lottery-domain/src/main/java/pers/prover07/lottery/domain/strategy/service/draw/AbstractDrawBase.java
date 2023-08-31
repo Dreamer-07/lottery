@@ -74,7 +74,7 @@ public abstract class AbstractDrawBase extends DrawConfig implements IDrawExec {
     private DrawRes buildDrawRes(String uId, String awardId, StrategyBriefVO strategy) {
         Long strategyId = strategy.getStrategyId();
         if (awardId == null) {
-            log.info("抽奖活动完成: 状态 - 未中间, userId - {}, strategyId - {}", uId, strategyId);
+            log.info("抽奖活动完成: 状态 - 未中奖, userId - {}, strategyId - {}", uId, strategyId);
             return new DrawRes(uId, strategyId, Constants.DrawState.FAIL.getCode(), null);
         }
 
@@ -83,8 +83,8 @@ public abstract class AbstractDrawBase extends DrawConfig implements IDrawExec {
         // 构建奖品响应信息
         DrawAwardVO drawAwardVO = new DrawAwardVO();
         drawAwardVO.setUId(uId);
-        BeanUtils.copyProperties(drawAwardVO, awardBriefVO);
-        BeanUtils.copyProperties(strategy, awardBriefVO);
+        BeanUtils.copyProperties(awardBriefVO, drawAwardVO);
+        BeanUtils.copyProperties(strategy, drawAwardVO);
 
         return new DrawRes(uId, strategyId, Constants.DrawState.SUCCESS.getCode(), drawAwardVO);
     }
