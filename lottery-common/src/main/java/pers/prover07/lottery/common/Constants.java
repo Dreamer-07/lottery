@@ -93,6 +93,58 @@ public class Constants {
         }
     }
 
+    /**
+     * 发奖状态
+     */
+    public enum GrantType {
+        INIT(0, "等待发奖"),
+        COMPLETE(1, "发奖成功"),
+        FAIL(2, "发奖失败");
+
+        private Integer code;
+
+        private String info;
+
+        GrantType(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+    }
+
+    /**
+     * 奖品状态
+     */
+    public enum AwardType {
+        COUPON_GOODS(3, "优惠券"),
+        REDEEM_CODE_GOODS(2, "兑换码"),
+        DESC_GOODS(1, "文字描述"),
+        PHYSICAL_GOODS(4, "实物奖品"),;
+        private Integer code;
+
+        private String info;
+
+        AwardType(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+    }
+
     public static class Cache {
         /**
          * 活动策略领域 - 抽奖奖品 - 库存锁
