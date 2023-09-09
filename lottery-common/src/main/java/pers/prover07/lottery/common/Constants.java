@@ -14,8 +14,8 @@ public class Constants {
     public enum ResponseCode {
         SUCCESS("0000", "成功"),
         UNKNOWN_ERROR("0001", "未知错误"),
-        ILLEGAL_PARAMETER("0002", "非法参数"),
-        INDEX_DUP("0003", "主键冲突");
+        ACTIVITY_STOCK_IS_EMPTY("0003", "库存已空"),
+        REPLACE_TAKE("0004", "不允许重复参与活动");
 
         private String code;
         private String info;
@@ -126,7 +126,8 @@ public class Constants {
         COUPON_GOODS(3, "优惠券"),
         REDEEM_CODE_GOODS(2, "兑换码"),
         DESC_GOODS(1, "文字描述"),
-        PHYSICAL_GOODS(4, "实物奖品"),;
+        PHYSICAL_GOODS(4, "实物奖品"),
+        ;
         private Integer code;
 
         private String info;
@@ -145,10 +146,120 @@ public class Constants {
         }
     }
 
+    /**
+     * id 生成类型
+     */
+    public enum Ids {
+        /**
+         * 雪花算法
+         */
+        SNOW_FLAKE,
+        /**
+         * 日期算法
+         */
+        SHORT_CODE,
+        /**
+         * 随机算法
+         */
+        RANDOM_NUMERIC;
+    }
+
+    /**
+     * 活动状态
+     */
+    public enum ActivityState {
+
+        /**
+         * 1：编辑
+         */
+        EDIT(1, "编辑"),
+        /**
+         * 2：提审
+         */
+        ARRAIGNMENT(2, "提审"),
+        /**
+         * 3：撤审
+         */
+        REVOKE(3, "撤审"),
+        /**
+         * 4：通过
+         */
+        PASS(4, "通过"),
+        /**
+         * 5：运行(活动中)
+         */
+        DOING(5, "运行(活动中)"),
+        /**
+         * 6：拒绝
+         */
+        REFUSE(6, "拒绝"),
+        /**
+         * 7：关闭
+         */
+        CLOSE(7, "关闭"),
+        /**
+         * 8：开启
+         */
+        OPEN(8, "开启");;
+
+        private Integer code;
+
+        private String info;
+
+        ActivityState(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+    }
+
+    /**
+     * 活动单使用状态 0未使用、1已使用
+     */
+    public enum TaskState {
+        NO_USED(0, "未使用"),
+
+        USED(1, "已使用");
+
+        private Integer code;
+
+        private String info;
+
+        TaskState(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+    }
+
     public static class Cache {
         /**
-         * 活动策略领域 - 抽奖奖品 - 库存锁
+         * 抽奖策略领域 - 抽奖奖品 - 库存锁
          */
         public static String STRATEGY_DRAW_STOCK_LOCK_KEY = "strategy:draw:stock_lock:";
+
+        /**
+         * 活动领域 - 名额预留库存
+         */
+        public static final String ACTIVITY_STOCK_COUNT_KEY = "strategy:stock_count:";
+
+        /**
+         * 活动领域 - 用户参与 - 已领取的活动次数
+         */
+        public static String ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY = "activity:partake:user_take_count:";
     }
 }

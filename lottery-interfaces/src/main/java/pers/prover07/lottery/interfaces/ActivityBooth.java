@@ -32,6 +32,6 @@ public class ActivityBooth implements IActivityBooth {
         ActivityDto activityDto = new ActivityDto();
         BeanUtils.copyProperties(activity, activityDto);
 
-        return new ActivityRes(Result.buildSuccessResult(Constants.ResponseCode.SUCCESS.getCode(), Constants.ResponseCode.SUCCESS.getInfo()), activityDto);
+        return new ActivityRes(Result.buildSuccessResult(), activityDto);
     }
 }

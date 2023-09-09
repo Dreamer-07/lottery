@@ -17,6 +17,16 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
+    <update id="deductStock">
+        UPDATE activity SET stock_surplus_count = stock_surplus_count - 1
+        WHERE activity_id = #{activityId} AND stock_surplus_count > 0
+    </update>
+    <update id="alterStatus">
+        UPDATE activity
+        SET state = #{afterState}
+        WHERE activity_id = #{activityId}
+          AND state = #{currentState}
+    </update>
 
     <select id="queryByActivityId" resultMap="activityMap">
         SELECT activity_id,

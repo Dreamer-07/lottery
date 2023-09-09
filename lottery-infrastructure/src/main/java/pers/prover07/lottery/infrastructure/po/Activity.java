@@ -15,6 +15,9 @@ public class Activity {
     // 活动ID
     private Long activityId;
 
+    // 策略ID
+    private Long strategyId;
+
     // 活动名称
     private String activityName;
 
@@ -29,6 +32,9 @@ public class Activity {
 
     // 库存
     private Integer stockCount;
+
+    // 剩余库存
+    private Integer stockSurplusCount;
 
     // 每人可参与次数
     private Integer takeCount;

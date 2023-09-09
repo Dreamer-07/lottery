@@ -15,12 +15,12 @@ import javax.annotation.Resource;
  * @author Prover07
  * @date 2023/9/1 14:56
  */
-public abstract class AbstractDistributionBase implements IDistributionGoods {
+public abstract class BaseDistributionBase implements IDistributionGoods {
 
     @Resource
     protected IAwardRepository awardRepository;
 
-    protected Logger logger = LoggerFactory.getLogger(AbstractDistributionBase.class);
+    protected Logger logger = LoggerFactory.getLogger(BaseDistributionBase.class);
 
 
     @Override
@@ -29,7 +29,11 @@ public abstract class AbstractDistributionBase implements IDistributionGoods {
 
         boolean status = doDistribution(goodsReq);
 
-        return buildDistributionRes(goodsReq.getUId(), status);
+        Constants.GrantType grantType = status ? Constants.GrantType.COMPLETE : Constants.GrantType.FAIL;
+
+        awardRepository.updateUserStrategyGrantState(goodsReq.getUId(), goodsReq.getOrderId(), goodsReq.getAwardId(), grantType.getCode());
+
+        return buildDistributionRes(goodsReq.getUId(), grantType.getCode(), grantType.getInfo());
     }
 
 
@@ -45,16 +49,17 @@ public abstract class AbstractDistributionBase implements IDistributionGoods {
      * 构建奖品发放的响应信息体
      *
      * @param uId
-     * @param status
+     * @param code
+     * @param info
      * @return
      */
-    protected DistributionRes buildDistributionRes(String uId, boolean status) {
-        Constants.GrantType grantType = status ? Constants.GrantType.COMPLETE : Constants.GrantType.FAIL;
-        return new DistributionRes(uId, grantType.getCode(), grantType.getInfo(), buildStatementId());
+    protected DistributionRes buildDistributionRes(String uId, Integer code, String info) {
+        return new DistributionRes(uId, code, info, buildStatementId());
     }
 
     /**
      * 构建结算单ID(如：发券后有券码、发货后有单号等，用于存根查询)
+     *
      * @return
      */
     protected String buildStatementId() {
