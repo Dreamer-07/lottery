@@ -201,15 +201,15 @@ public class ApplicationTest {
 
     @Test
     public void test_alterState() {
-        logger.info("提交审核，测试：{}", JSON.toJSONString(stateHandler.arraignment(65981192299L, Constants.ActivityState.EDIT)));
-        logger.info("审核通过，测试：{}", JSON.toJSONString(stateHandler.checkPass(65981192299L, Constants.ActivityState.ARRAIGNMENT)));
-        logger.info("运行活动，测试：{}", JSON.toJSONString(stateHandler.doing(65981192299L, Constants.ActivityState.PASS)));
-        logger.info("二次提审，测试：{}", JSON.toJSONString(stateHandler.checkPass(65981192299L, Constants.ActivityState.EDIT)));
+        logger.info("提交审核，测试：{}", JSON.toJSONString(stateHandler.arraignment(33924793979L, Constants.ActivityState.EDIT)));
+        logger.info("审核通过，测试：{}", JSON.toJSONString(stateHandler.checkPass(33924793979L, Constants.ActivityState.ARRAIGNMENT)));
+        logger.info("运行活动，测试：{}", JSON.toJSONString(stateHandler.doing(33924793979L, Constants.ActivityState.PASS)));
+        logger.info("二次提审，测试：{}", JSON.toJSONString(stateHandler.checkPass(33924793979L, Constants.ActivityState.EDIT)));
     }
 
     @Test
     public void test_activityPartake() {
-        PartakeReq req = new PartakeReq("Uhdgkw766120d", 65981192299L);
+        PartakeReq req = new PartakeReq("Uhdgkw766120d", 33924793979L);
         PartakeRes res = activityPartake.doPartake(req);
         logger.info("请求参数：{}", JSON.toJSONString(req));
         logger.info("测试结果：{}", JSON.toJSONString(res));

@@ -8,8 +8,6 @@ import pers.prover07.lottery.domain.strategy.service.draw.IDrawExec;
 import javax.annotation.Resource;
 
 /**
- * TODO(这里用一句话描述这个类的作用)
- *
  * @author Prover07
  * @date 2023/8/25 15:18
  */

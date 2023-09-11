@@ -15,7 +15,8 @@ public class Constants {
         SUCCESS("0000", "成功"),
         UNKNOWN_ERROR("0001", "未知错误"),
         ACTIVITY_STOCK_IS_EMPTY("0003", "库存已空"),
-        REPLACE_TAKE("0004", "不允许重复参与活动");
+        REPLACE_TAKE("0004", "不允许重复参与活动"),
+        DRAW_FAIL("0005", "未中奖");
 
         private String code;
         private String info;

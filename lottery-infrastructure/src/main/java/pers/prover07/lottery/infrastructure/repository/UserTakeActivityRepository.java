@@ -42,7 +42,7 @@ public class UserTakeActivityRepository implements IUserTakeActivityRepository {
         }
 
         UserTakeActivityVO userTakeActivityVO = new UserTakeActivityVO();
-        BeanUtils.copyProperties(userTakeActivityVO, userTakeActivityVO);
+        BeanUtils.copyProperties(userTakeActivity, userTakeActivityVO);
 
         return userTakeActivityVO;
     }
