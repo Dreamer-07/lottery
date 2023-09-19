@@ -41,4 +41,13 @@ public interface IUserTakeActivityRepository {
      * @param mqState
      */
     void updateInvoiceMqState(String uId, Long orderId, Integer mqState);
+
+    /**
+     * 用户使用活动单参与抽奖
+     * @param uId
+     * @param activityId
+     * @param takeId
+     * @return
+     */
+    int useTakeActivity(String uId, Long activityId, Long takeId);
 }

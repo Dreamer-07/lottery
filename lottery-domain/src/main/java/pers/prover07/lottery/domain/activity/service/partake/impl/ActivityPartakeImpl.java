@@ -106,6 +106,13 @@ public class ActivityPartakeImpl extends BaseActivityPartake {
     @Override
     public Result recordDrawOrder(DrawOrderVo drawOrderVo) {
         try {
+            // 变更用户活动单领取信息
+            int updateCount = userTakeActivityRepository.useTakeActivity(drawOrderVo.getUId(), drawOrderVo.getActivityId(), drawOrderVo.getTakeId());
+            if (updateCount == 0) {
+                log.error("记录中奖单，个人参与活动抽奖已消耗完 activityId：{} uId：{}", drawOrderVo.getActivityId(), drawOrderVo.getUId());
+                return Result.buildResult(Constants.ResponseCode.REPLACE_TAKE);
+            }
+
             userTakeActivityRepository.saveUserStrategyExport(drawOrderVo);
         } catch (DuplicateKeyException e) {
             log.error("记录中奖单，唯一索引冲突 activityId：{} uId：{}", drawOrderVo.getActivityId(), drawOrderVo.getUId(), e);

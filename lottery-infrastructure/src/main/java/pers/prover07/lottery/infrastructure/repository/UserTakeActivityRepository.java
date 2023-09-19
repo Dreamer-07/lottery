@@ -86,4 +86,18 @@ public class UserTakeActivityRepository implements IUserTakeActivityRepository {
         );
     }
 
+    @Override
+    public int useTakeActivity(String uId, Long activityId, Long takeId) {
+        UserTakeActivity userTakeActivity = new UserTakeActivity();
+        userTakeActivity.setState(Constants.TaskState.USED.getCode());
+
+        return userTakeActivityDao.update(
+                userTakeActivity,
+                Wrappers.<UserTakeActivity>lambdaQuery()
+                        .eq(UserTakeActivity::getUId, uId)
+                        .eq(UserTakeActivity::getActivityId, activityId)
+                        .eq(UserTakeActivity::getTakeId, takeId)
+        );
+    }
+
 }
