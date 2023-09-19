@@ -12,8 +12,11 @@ import pers.prover07.lottery.common.Result;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
 import pers.prover07.lottery.domain.activity.service.partake.BaseActivityPartake;
+import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
+import pers.prover07.lottery.domain.award.repository.IAwardRepository;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * 参与活动业务类
@@ -24,6 +27,9 @@ import javax.annotation.PostConstruct;
 @Service
 @Slf4j
 public class ActivityPartakeImpl extends BaseActivityPartake {
+
+    @Resource
+    private IAwardRepository awardRepository;
 
     private final DefaultRedisScript<Long> activityStockCountIncrScript = new DefaultRedisScript<>();
 
@@ -95,5 +101,21 @@ public class ActivityPartakeImpl extends BaseActivityPartake {
         }
 
         return Result.buildSuccessResult();
+    }
+
+    @Override
+    public Result recordDrawOrder(DrawOrderVo drawOrderVo) {
+        try {
+            userTakeActivityRepository.saveUserStrategyExport(drawOrderVo);
+        } catch (DuplicateKeyException e) {
+            log.error("记录中奖单，唯一索引冲突 activityId：{} uId：{}", drawOrderVo.getActivityId(), drawOrderVo.getUId(), e);
+            return Result.buildResult(Constants.ResponseCode.REPLACE_TAKE);
+        }
+        return Result.buildSuccessResult();
+    }
+
+    @Override
+    public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
+        userTakeActivityRepository.updateInvoiceMqState(uId, orderId, mqState);
     }
 }

@@ -47,6 +47,10 @@ public abstract class BaseActivityPartake implements IActivityPartake {
         // 查询活动信息
         ActivityBillVO activityBillVo = activityRepository.queryActivityBill(req);
 
+        if (activityBillVo == null) {
+            return new PartakeRes(Constants.ResponseCode.UNKNOWN_ERROR.getCode(), "无法查找到改活动");
+        }
+
         // 活动信息校验
         Result result = checkActivityBill(req, activityBillVo);
         if (!result.getCode().equals(Constants.ResponseCode.SUCCESS.getCode())) {

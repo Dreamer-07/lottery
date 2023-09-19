@@ -1,7 +1,9 @@
 package pers.prover07.lottery.rpc;
 
 import pers.prover07.lottery.rpc.req.ActivityReq;
+import pers.prover07.lottery.rpc.req.DrawReq;
 import pers.prover07.lottery.rpc.res.ActivityRes;
+import pers.prover07.lottery.rpc.res.DrawRes;
 
 /**
  * 活动展台
@@ -15,12 +17,13 @@ import pers.prover07.lottery.rpc.res.ActivityRes;
  */
 public interface ILotteryActivityBooth {
 
+
     /**
-     * 查找活动
-     * @param req
+     * 参与活动抽奖
+     * @param drawReq
      * @return
      */
-    ActivityRes queryActivityById(ActivityReq req);
+    DrawRes doDraw(DrawReq drawReq);
 
 
 

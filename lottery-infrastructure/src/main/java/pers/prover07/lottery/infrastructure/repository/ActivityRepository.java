@@ -17,6 +17,7 @@ import pers.prover07.lottery.infrastructure.po.Award;
 import pers.prover07.lottery.infrastructure.po.Strategy;
 import pers.prover07.lottery.infrastructure.po.StrategyDetail;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -85,6 +86,11 @@ public class ActivityRepository implements IActivityRepository {
                 Wrappers.<Activity>lambdaQuery()
                         .eq(Activity::getActivityId, req.getActivityId())
         );
+
+        if (!Optional.ofNullable(activity).isPresent()) {
+            return null;
+        }
+
 
         // 查找用户已经领取的次数
         Integer takeCount = (Integer) redisRepository.hGet(Constants.Cache.ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY + req.getActivityId(), req.getUId());

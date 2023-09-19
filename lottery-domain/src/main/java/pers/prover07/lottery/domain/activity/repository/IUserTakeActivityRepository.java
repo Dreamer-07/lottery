@@ -3,6 +3,7 @@ package pers.prover07.lottery.domain.activity.repository;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
 import pers.prover07.lottery.domain.activity.model.vo.UserTakeActivityVO;
+import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
 
 /**
  * 用户参与活动仓储接口
@@ -26,4 +27,18 @@ public interface IUserTakeActivityRepository {
      * @param takeId
      */
     void takeActivity(PartakeReq partake, ActivityBillVO activityBillVo, long takeId);
+
+    /**
+     * 保存中奖信息
+     * @param drawOrderVo
+     */
+    void saveUserStrategyExport(DrawOrderVo drawOrderVo);
+
+    /**
+     * 修改 mq 发奖状态
+     * @param uId
+     * @param orderId
+     * @param mqState
+     */
+    void updateInvoiceMqState(String uId, Long orderId, Integer mqState);
 }

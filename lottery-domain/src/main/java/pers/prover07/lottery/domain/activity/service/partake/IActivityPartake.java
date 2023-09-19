@@ -1,7 +1,9 @@
 package pers.prover07.lottery.domain.activity.service.partake;
 
+import pers.prover07.lottery.common.Result;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.res.PartakeRes;
+import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
 
 /**
  * 活动参与接口
@@ -19,4 +21,18 @@ public interface IActivityPartake {
      */
     PartakeRes doPartake(PartakeReq req);
 
+    /**
+     * 记录中奖订单信息
+     * @param drawOrderVo
+     * @return
+     */
+    Result recordDrawOrder(DrawOrderVo drawOrderVo);
+
+    /**
+     * 修改发奖的状态
+     * @param uId
+     * @param orderId
+     * @param mqState
+     */
+    void updateInvoiceMqState(String uId, Long orderId, Integer mqState);
 }

@@ -10,10 +10,11 @@ import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
 import pers.prover07.lottery.domain.activity.model.vo.UserTakeActivityVO;
 import pers.prover07.lottery.domain.activity.repository.IUserTakeActivityRepository;
+import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
+import pers.prover07.lottery.infrastructure.dao.IUserStrategyExportDao;
 import pers.prover07.lottery.infrastructure.dao.IUserTakeActivityDao;
+import pers.prover07.lottery.infrastructure.po.UserStrategyExport;
 import pers.prover07.lottery.infrastructure.po.UserTakeActivity;
-
-import java.util.Optional;
 
 /**
  * 用户参与活动仓储接口
@@ -26,6 +27,8 @@ import java.util.Optional;
 public class UserTakeActivityRepository implements IUserTakeActivityRepository {
 
     private final IUserTakeActivityDao userTakeActivityDao;
+
+    private final IUserStrategyExportDao userStrategyExportDao;
 
     @Override
     public UserTakeActivityVO queryNoConsumedTakeActivityOrder(Long activityId, String uId) {
@@ -61,6 +64,26 @@ public class UserTakeActivityRepository implements IUserTakeActivityRepository {
         userTakeActivity.setState(Constants.TaskState.NO_USED.getCode());
 
         userTakeActivityDao.insert(userTakeActivity);
+    }
+
+    @Override
+    public void saveUserStrategyExport(DrawOrderVo drawOrderVo) {
+        UserStrategyExport userStrategyExport = new UserStrategyExport();
+        BeanUtils.copyProperties(drawOrderVo, userStrategyExport);
+        userStrategyExportDao.insert(userStrategyExport);
+    }
+
+    @Override
+    public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
+        UserStrategyExport userStrategyExport = new UserStrategyExport();
+        userStrategyExport.setMqState(mqState);
+
+        userStrategyExportDao.update(
+                userStrategyExport,
+                Wrappers.<UserStrategyExport>lambdaQuery()
+                        .eq(UserStrategyExport::getUId, uId)
+                        .eq(UserStrategyExport::getOrderId, orderId)
+        );
     }
 
 }

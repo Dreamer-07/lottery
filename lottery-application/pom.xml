@@ -19,6 +19,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>pers.prover07.lottery</groupId>
             <artifactId>lottery-domain</artifactId>
             <version>1.0-SNAPSHOT</version>

@@ -19,7 +19,6 @@ public class SnowFlakeCode implements IIdGenerator {
 
     private Snowflake snowflake;
 
-
     @PostConstruct
     public void init() {
         // 0 ~ 31 位 采用配置的方法使用

@@ -1,5 +1,7 @@
 package pers.prover07.lottery.infrastructure.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.Date;
 public class UserStrategyExport {
 
     // 自增ID
+    @TableId(type = IdType.AUTO)
     private Long id;
 
 

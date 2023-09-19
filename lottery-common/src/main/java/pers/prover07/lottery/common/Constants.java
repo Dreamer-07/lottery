@@ -1,5 +1,8 @@
 package pers.prover07.lottery.common;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * 系统中常用状态信息定义
  *
@@ -16,7 +19,8 @@ public class Constants {
         UNKNOWN_ERROR("0001", "未知错误"),
         ACTIVITY_STOCK_IS_EMPTY("0003", "库存已空"),
         REPLACE_TAKE("0004", "不允许重复参与活动"),
-        DRAW_FAIL("0005", "未中奖");
+        DRAW_FAIL("0005", "未中奖"),
+        ;
 
         private String code;
         private String info;
@@ -97,7 +101,9 @@ public class Constants {
     /**
      * 发奖状态
      */
-    public enum GrantType {
+    @Getter
+    @AllArgsConstructor
+    public enum GrantState {
         INIT(0, "等待发奖"),
         COMPLETE(1, "发奖成功"),
         FAIL(2, "发奖失败");
@@ -105,19 +111,6 @@ public class Constants {
         private Integer code;
 
         private String info;
-
-        GrantType(Integer code, String info) {
-            this.code = code;
-            this.info = info;
-        }
-
-        public Integer getCode() {
-            return code;
-        }
-
-        public String getInfo() {
-            return info;
-        }
     }
 
     /**
@@ -245,6 +238,28 @@ public class Constants {
         public void setCode(Integer code) {
             this.code = code;
         }
+    }
+
+    /**
+     * 消息发送状态（0未发送、1发送成功、2发送失败）
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum MQState {
+        INIT(0, "初始"),
+        COMPLETE(1, "完成"),
+        FAIL(2, "失败");
+
+        private Integer code;
+        private String info;
+    }
+
+    public static class MessageTopic {
+        /**
+         * 中奖发货单
+         */
+        public static final String INVOICE = "lottery_invoice";
+
     }
 
     public static class Cache {

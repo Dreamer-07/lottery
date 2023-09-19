@@ -1,5 +1,9 @@
 package pers.prover07.lottery.domain.award.repository;
 
+import pers.prover07.lottery.common.Result;
+import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
+import pers.prover07.lottery.domain.strategy.model.vo.DrawAwardVO;
+
 /**
  *
  *

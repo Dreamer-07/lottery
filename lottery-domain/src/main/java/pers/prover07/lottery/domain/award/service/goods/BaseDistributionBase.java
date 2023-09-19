@@ -29,7 +29,7 @@ public abstract class BaseDistributionBase implements IDistributionGoods {
 
         boolean status = doDistribution(goodsReq);
 
-        Constants.GrantType grantType = status ? Constants.GrantType.COMPLETE : Constants.GrantType.FAIL;
+        Constants.GrantState grantType = status ? Constants.GrantState.COMPLETE : Constants.GrantState.FAIL;
 
         awardRepository.updateUserStrategyGrantState(goodsReq.getUId(), goodsReq.getOrderId(), goodsReq.getAwardId(), grantType.getCode());
 
