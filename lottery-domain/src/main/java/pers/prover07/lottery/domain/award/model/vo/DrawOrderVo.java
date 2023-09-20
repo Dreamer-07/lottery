@@ -31,6 +31,10 @@ public class DrawOrderVo {
      */
     private Long activityId;
     /**
+     * 中奖状态(0未中奖、1已中奖、2兜底奖)
+     */
+    private Integer drawState;
+    /**
      * 订单ID
      */
     private Long orderId;

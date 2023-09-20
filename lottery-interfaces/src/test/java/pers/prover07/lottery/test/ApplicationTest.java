@@ -2,6 +2,7 @@ package pers.prover07.lottery.test;
 
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ import pers.prover07.lottery.domain.strategy.model.res.DrawRes;
 import pers.prover07.lottery.domain.strategy.model.vo.DrawAwardVO;
 import pers.prover07.lottery.domain.strategy.service.draw.IDrawExec;
 import pers.prover07.lottery.domain.support.ids.IIdGenerator;
+import pers.prover07.lottery.infrastructure.dao.IUserStrategyExportDao;
+import pers.prover07.lottery.infrastructure.po.UserStrategyExport;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -63,6 +66,9 @@ public class ApplicationTest {
     @Resource
     private Map<Constants.Ids, IIdGenerator> idGeneratorMap;
 
+
+    @Resource
+    private IUserStrategyExportDao userStrategyExportDao;
 
     ActivityConfigRich activityConfigRich;
 
@@ -213,6 +219,12 @@ public class ApplicationTest {
         PartakeRes res = activityPartake.doPartake(req);
         logger.info("请求参数：{}", JSON.toJSONString(req));
         logger.info("测试结果：{}", JSON.toJSONString(res));
+    }
+
+    @Test
+    public void test_selectUserStrategyExportAll() {
+        System.out.println(userStrategyExportDao.selectCount(Wrappers.<UserStrategyExport>lambdaQuery()
+                .ne(UserStrategyExport::getOrderId, -1L)));
     }
 
 

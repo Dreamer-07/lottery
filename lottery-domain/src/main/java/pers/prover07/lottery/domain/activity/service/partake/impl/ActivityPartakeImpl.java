@@ -13,10 +13,12 @@ import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
 import pers.prover07.lottery.domain.activity.service.partake.BaseActivityPartake;
 import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
-import pers.prover07.lottery.domain.award.repository.IAwardRepository;
+import pers.prover07.lottery.domain.strategy.repository.IStrategyRepository;
+import pers.prover07.lottery.domain.support.cache.IRedisRepository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * 参与活动业务类
@@ -29,7 +31,10 @@ import javax.annotation.Resource;
 public class ActivityPartakeImpl extends BaseActivityPartake {
 
     @Resource
-    private IAwardRepository awardRepository;
+    private IStrategyRepository strategyRepository;
+
+    @Resource
+    private IRedisRepository redisRepository;
 
     private final DefaultRedisScript<Long> activityStockCountIncrScript = new DefaultRedisScript<>();
 
@@ -40,38 +45,33 @@ public class ActivityPartakeImpl extends BaseActivityPartake {
     }
 
     @Override
-    protected Result grabActivity(PartakeReq partake, ActivityBillVO activityBillVo, long takeId) {
-        try {
-            // 增加 redis 中的已领取次数
-            double takeCount = redisRepository.hIncr(Constants.Cache.ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY + partake.getActivityId(), partake.getUId(), 1);
-            if (takeCount > activityBillVo.getTakeCount()) {
-                redisRepository.hIncr(Constants.Cache.ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY + partake.getActivityId(), partake.getUId(), -1);
-                return Result.buildResult(Constants.ResponseCode.UNKNOWN_ERROR.getCode(), "已参与过该活动");
-            }
-
-            // mysql 中同步记录
-            userTakeActivityRepository.takeActivity(partake, activityBillVo, takeId);
-        } catch (DuplicateKeyException exception) {
-            log.error("领取活动，唯一索引冲突 activityId：{} uId：{}", partake.getActivityId(), partake.getUId(), exception);
-            return Result.buildResult(Constants.ResponseCode.REPLACE_TAKE);
-        } catch (Exception exception) {
-            log.error("领取活动，出现未知错误", exception);
-            return Result.buildErrorResult();
+    public void grabActivity(PartakeReq partake, ActivityBillVO activityBillVo, long takeId) {
+        // mysql 中同步记录用户领取记录
+        userTakeActivityRepository.takeActivity(partake, activityBillVo, takeId);
+        // 同步活动名额
+        boolean state = activityRepository.subtractionActivityStock(partake.getActivityId());
+        if (!state) {
+            throw new RuntimeException("活动名额不足");
+        }
+        UUID uuid1 = UUID.randomUUID();
+        // 增加 redis 中的已领取次数
+        // TODO 脚本优化
+        double takeCount = redisRepository.hIncr(Constants.Cache.ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY + partake.getActivityId(), partake.getUId(), 1);
+        if (takeCount > activityBillVo.getTakeCount()) {
+            redisRepository.hIncr(Constants.Cache.ACTIVITY_PARTAKE_USER_TAKE_COUNT_KEY + partake.getActivityId(), partake.getUId(), -1);
+            throw new RuntimeException("用户个人领取次数到达上线");
         }
 
-        return Result.buildSuccessResult();
+        // 减少 redis 活动库存
+        long stock = redisRepository.execute(activityStockCountIncrScript, ListUtil.of(Constants.Cache.ACTIVITY_STOCK_COUNT_KEY + partake.getActivityId()));
+        log.info("扣减 redis 库存: {}, {}", stock, Constants.Cache.ACTIVITY_STOCK_COUNT_KEY + partake.getActivityId());
+        if (stock < 0) {
+            throw new RuntimeException("活动名额不足");
+        }
     }
 
     @Override
     protected boolean subtractionActivityStock(PartakeReq req) {
-        // 扣减 redis 库存
-        long stock = redisRepository.execute(activityStockCountIncrScript, ListUtil.of(Constants.Cache.ACTIVITY_STOCK_COUNT_KEY + req.getActivityId()));
-        log.info("扣减 redis 库存: {}, {}", stock, Constants.Cache.ACTIVITY_STOCK_COUNT_KEY + req.getActivityId());
-        // 扣减数据库库存
-        if (stock > 0) {
-            return activityRepository.subtractionActivityStock(req.getActivityId());
-        }
-
         return false;
     }
 
@@ -109,8 +109,18 @@ public class ActivityPartakeImpl extends BaseActivityPartake {
             // 变更用户活动单领取信息
             int updateCount = userTakeActivityRepository.useTakeActivity(drawOrderVo.getUId(), drawOrderVo.getActivityId(), drawOrderVo.getTakeId());
             if (updateCount == 0) {
-                log.error("记录中奖单，个人参与活动抽奖已消耗完 activityId：{} uId：{}", drawOrderVo.getActivityId(), drawOrderVo.getUId());
+                log.error("记录中奖单，当前 activityId：{} uId：{}", drawOrderVo.getActivityId(), drawOrderVo.getUId());
                 return Result.buildResult(Constants.ResponseCode.REPLACE_TAKE);
+            }
+
+            // 扣减中奖品的库存
+            if (!Constants.DrawState.FAIL.getCode().equals(drawOrderVo.getDrawState())) {
+                Boolean state = redisRepository.lock(Constants.Cache.STRATEGY_DRAW_STOCK_LOCK_KEY + drawOrderVo.getAwardId(), () -> strategyRepository.deductStock(drawOrderVo.getStrategyId(), drawOrderVo.getAwardId()));
+                if (Boolean.FALSE.equals(state)) {
+                    // 商品已空就显示未中奖
+                    drawOrderVo.setDrawState(Constants.DrawState.FAIL.getCode());
+                    drawOrderVo.setOrderId(-1L);
+                }
             }
 
             userTakeActivityRepository.saveUserStrategyExport(drawOrderVo);

@@ -30,7 +30,7 @@ public class DrawRes {
     /**
      * 中奖状态：0未中奖、1已中奖、2兜底奖 Constants.DrawState
      */
-    private Integer drawState = Constants.DrawState.FAIL.getCode();
+    private Integer drawState;
 
     /**
      * 中奖奖品信息

@@ -1,5 +1,6 @@
 package pers.prover07.lottery.domain.activity.service.partake;
 
+import org.springframework.aop.framework.AopContext;
 import org.springframework.transaction.annotation.Transactional;
 import pers.prover07.lottery.common.Constants;
 import pers.prover07.lottery.common.Result;
@@ -36,7 +37,6 @@ public abstract class BaseActivityPartake implements IActivityPartake {
     protected IRedisRepository redisRepository;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public PartakeRes doPartake(PartakeReq req) {
         // 判断用户是否已经领取过该活动单且没有完成
         UserTakeActivityVO userTakeActivityVO = userTakeActivityRepository.queryNoConsumedTakeActivityOrder(req.getActivityId(), req.getUId());
@@ -46,7 +46,6 @@ public abstract class BaseActivityPartake implements IActivityPartake {
 
         // 查询活动信息
         ActivityBillVO activityBillVo = activityRepository.queryActivityBill(req);
-
         if (activityBillVo == null) {
             return new PartakeRes(Constants.ResponseCode.UNKNOWN_ERROR.getCode(), "无法查找到改活动");
         }
@@ -57,35 +56,33 @@ public abstract class BaseActivityPartake implements IActivityPartake {
             return new PartakeRes(result.getCode(), result.getInfo());
         }
 
-        // 扣减活动库存
-        boolean status = subtractionActivityStock(req);
-        if (!status) {
-            return new PartakeRes(Constants.ResponseCode.ACTIVITY_STOCK_IS_EMPTY.getCode(), Constants.ResponseCode.ACTIVITY_STOCK_IS_EMPTY.getInfo());
-        }
-
         // 插入活动领取信息
         long takeId = idGeneratorMap.get(Constants.Ids.SNOW_FLAKE).nextId();
-        Result grabResult = this.grabActivity(req, activityBillVo, takeId);
-        if (!grabResult.getCode().equals(Constants.ResponseCode.SUCCESS.getCode())) {
-            // 回收库存
-            redisRepository.incr(Constants.Cache.STRATEGY_DRAW_STOCK_LOCK_KEY + req.getActivityId(), 1);
-            return new PartakeRes(grabResult.getCode(), grabResult.getInfo());
+        try {
+            ((BaseActivityPartake) AopContext.currentProxy()).grabActivity(req, activityBillVo, takeId);
+        } catch (Exception e) {
+            // TODO: 应该将业务异常和代码异常分开来处理
+            return new PartakeRes(Constants.ResponseCode.UNKNOWN_ERROR.getCode(), e.getMessage());
         }
 
+        // 扣减活动库存
         return buildPartakeResult(activityBillVo.getStrategyId(), takeId);
     }
 
     /**
      * 领取活动
+     *
      * @param req
      * @param activityBillVo
      * @param takeId
      * @return
      */
-    protected abstract Result grabActivity(PartakeReq req, ActivityBillVO activityBillVo, long takeId);
+    @Transactional(rollbackFor = Exception.class)
+    public abstract void grabActivity(PartakeReq req, ActivityBillVO activityBillVo, long takeId);
 
     /**
-     * 扣减活动库存
+     * 扣减redis活动库存
+     *
      * @param req
      * @return
      */

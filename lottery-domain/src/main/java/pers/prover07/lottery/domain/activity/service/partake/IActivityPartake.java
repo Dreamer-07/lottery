@@ -1,5 +1,6 @@
 package pers.prover07.lottery.domain.activity.service.partake;
 
+import org.springframework.transaction.annotation.Transactional;
 import pers.prover07.lottery.common.Result;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.res.PartakeRes;
@@ -26,6 +27,7 @@ public interface IActivityPartake {
      * @param drawOrderVo
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     Result recordDrawOrder(DrawOrderVo drawOrderVo);
 
     /**

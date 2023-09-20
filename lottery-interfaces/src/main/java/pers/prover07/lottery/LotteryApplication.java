@@ -3,6 +3,7 @@ package pers.prover07.lottery;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import pers.prover07.lottery.domain.strategy.service.draw.IDrawExec;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
  */
 @SpringBootApplication
 @EnableDubbo
+@EnableAspectJAutoProxy(exposeProxy = true)
 public class LotteryApplication {
 
     @Resource

@@ -56,18 +56,17 @@ public class ActivityProcessImpl implements IActivityProcess {
             return new DrawProcessRes(partakeRes.getCode(), partakeRes.getInfo());
         }
 
-
         // 执行抽奖
         DrawReq drawReq = new DrawReq(req.getUId(), partakeRes.getStrategyId(), idGeneratorMap.get(Constants.Ids.RANDOM_NUMERIC).toString());
         DrawRes drawRes = drawExec.doDrawExec(drawReq);
-        if (Constants.DrawState.FAIL.getCode().equals(drawRes.getDrawState())) {
-            return new DrawProcessRes(Constants.ResponseCode.DRAW_FAIL.getCode(), Constants.ResponseCode.DRAW_FAIL.getInfo());
-        }
 
         // 中奖结果保存
         DrawAwardVO drawAwardVO = drawRes.getDrawAwardInfo();
-        DrawOrderVo drawOrderVo = buildDrawOrderVo(req, partakeRes.getStrategyId(), partakeRes.getTakeId(), drawAwardVO);
+        DrawOrderVo drawOrderVo = buildDrawOrderVo(req, partakeRes.getStrategyId(), partakeRes.getTakeId(), drawAwardVO, drawRes.getDrawState());
         Result result = activityPartake.recordDrawOrder(drawOrderVo);
+        if (Constants.DrawState.FAIL.getCode().equals(drawRes.getDrawState())) {
+            return new DrawProcessRes(Constants.ResponseCode.DRAW_FAIL.getCode(), Constants.ResponseCode.DRAW_FAIL.getInfo());
+        }
         if (!Constants.ResponseCode.SUCCESS.getCode().equals(result.getCode())) {
             return new DrawProcessRes(result.getCode(), result.getInfo());
         }
@@ -118,15 +117,24 @@ public class ActivityProcessImpl implements IActivityProcess {
      * @param drawAwardVO
      * @return
      */
-    private DrawOrderVo buildDrawOrderVo(DrawProcessReq req, Long strategyId, Long takeId, DrawAwardVO drawAwardVO) {
+    private DrawOrderVo buildDrawOrderVo(DrawProcessReq req, Long strategyId, Long takeId, DrawAwardVO drawAwardVO, Integer drawState) {
         DrawOrderVo drawOrderVo = new DrawOrderVo();
-        BeanUtils.copyProperties(drawAwardVO, drawOrderVo);
-        long orderId = idGeneratorMap.get(Constants.Ids.SNOW_FLAKE).nextId();
-        drawOrderVo.setOrderId(orderId);
+
+        if (drawAwardVO != null) {
+            BeanUtils.copyProperties(drawAwardVO, drawOrderVo);
+            long orderId = idGeneratorMap.get(Constants.Ids.SNOW_FLAKE).nextId();
+            drawOrderVo.setOrderId(orderId);
+            drawOrderVo.setGrantState(Constants.GrantState.INIT.getCode());
+        } else {
+            // 未中奖的记录保存到一张表里
+            drawOrderVo.setOrderId(-1L);
+        }
+
+        drawOrderVo.setDrawState(drawState);
         drawOrderVo.setTakeId(takeId);
         drawOrderVo.setStrategyId(strategyId);
+        drawOrderVo.setUId(req.getUId());
         drawOrderVo.setActivityId(req.getActivityId());
-        drawOrderVo.setGrantState(Constants.GrantState.INIT.getCode());
         return drawOrderVo;
     }
 }

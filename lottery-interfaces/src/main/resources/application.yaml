@@ -41,7 +41,7 @@ spring:
             # 配置分表策略
             table-strategy:
               standard:
-                sharding-column: order_id
+                sharding-column: u_id
                 sharding-algorithm-name: alg_hash
             # 分布式序列配置
             key-generate-strategy:

@@ -97,6 +97,7 @@ public class UserTakeActivityRepository implements IUserTakeActivityRepository {
                         .eq(UserTakeActivity::getUId, uId)
                         .eq(UserTakeActivity::getActivityId, activityId)
                         .eq(UserTakeActivity::getTakeId, takeId)
+                        .eq(UserTakeActivity::getState, Constants.TaskState.NO_USED.getCode())
         );
     }
 
