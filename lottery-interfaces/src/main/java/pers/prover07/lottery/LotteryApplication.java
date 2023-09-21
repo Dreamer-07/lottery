@@ -17,9 +17,6 @@ import javax.annotation.Resource;
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class LotteryApplication {
 
-    @Resource
-    private IDrawExec drawExec;
-
     public static void main(String[] args) {
         SpringApplication.run(LotteryApplication.class, args);
     }

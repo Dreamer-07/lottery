@@ -8,9 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.prover07.lottery.common.Constants;
 import pers.prover07.lottery.domain.activity.model.aggregates.ActivityConfigRich;
 import pers.prover07.lottery.domain.activity.model.req.ActivityConfigReq;
+import pers.prover07.lottery.domain.activity.model.vo.ActivityVO;
 import pers.prover07.lottery.domain.activity.repository.IActivityRepository;
 import pers.prover07.lottery.domain.activity.service.deploy.IActivityDeploy;
 import pers.prover07.lottery.domain.support.cache.IRedisRepository;
+
+import java.util.List;
 
 /**
  * 活动配置接口实现
@@ -51,6 +54,11 @@ public class ActivityDeployImpl implements IActivityDeploy {
             log.error("创建活动：status - error, message - activityId: {} 重复, data - {}", activityId, activityConfigReq, exception);
             throw exception;
         }
+    }
+
+    @Override
+    public List<ActivityVO> scanToDoActivityList(Long startId, Integer count) {
+        return activityRepository.scanToDoActivityList(startId, count);
     }
 
 }

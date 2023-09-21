@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import pers.prover07.lottery.infrastructure.po.UserTakeActivity;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *

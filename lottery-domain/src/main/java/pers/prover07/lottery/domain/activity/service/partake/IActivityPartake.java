@@ -4,7 +4,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pers.prover07.lottery.common.Result;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.res.PartakeRes;
+import pers.prover07.lottery.domain.activity.model.vo.InvoiceVO;
 import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
+
+import java.util.List;
 
 /**
  * 活动参与接口
@@ -37,4 +40,12 @@ public interface IActivityPartake {
      * @param mqState
      */
     void updateInvoiceMqState(String uId, Long orderId, Integer mqState);
+
+    /**
+     * 扫描库存中没有发奖成功的用户领取记录
+     * @param startId
+     * @param count
+     * @return
+     */
+    List<InvoiceVO> scanInvoiceMqState(long startId, Integer count);
 }

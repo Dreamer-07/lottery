@@ -17,6 +17,11 @@ import pers.prover07.lottery.domain.award.model.vo.ShippingAddress;
 public class InvoiceVO {
 
     /**
+     * 用户领取id
+     */
+    private Long id;
+
+    /**
      * 用户ID
      */
     private String uId;

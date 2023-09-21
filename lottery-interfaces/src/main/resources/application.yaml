@@ -124,15 +124,15 @@ dubbo:
   scan:
     base-packages: pers.prover07.lottery.rpc
 
-#db-router:
-#  databases: db00
-#  datasource:
-#    db00:
-#      username: root
-#      password: 123456
-#      url: jdbc:mysql://127.0.0.1:3306/lottery?useSSL=false&serverTimezone=UTC
-#      driver-class-name: com.mysql.cj.jdbc.Driver
-#  tables:
-#    activity:
-#      table-strategy:
-#        column: id
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:7788/xxl-job-admin
+    accessToken: default_token
+    executor:
+      appname: lottery
+      address:
+      ip:
+      port: 9998
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30

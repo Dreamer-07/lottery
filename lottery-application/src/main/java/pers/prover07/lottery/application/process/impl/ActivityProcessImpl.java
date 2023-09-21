@@ -1,5 +1,6 @@
 package pers.prover07.lottery.application.process.impl;
 
+import com.sun.jmx.remote.internal.ArrayQueue;
 import org.springframework.beans.BeanUtils;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,10 @@ import pers.prover07.lottery.domain.strategy.service.draw.IDrawExec;
 import pers.prover07.lottery.domain.support.ids.IIdGenerator;
 
 import javax.annotation.Resource;
+import java.util.ArrayDeque;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * 抽奖活动业务编排实现
@@ -41,6 +45,8 @@ public class ActivityProcessImpl implements IActivityProcess {
     @Resource
     private IDrawExec drawExec;
 
+
+    private Queue<Integer> minStack = new ArrayDeque<>();
     @Resource
     private KafkaProducer kafkaProducer;
 
@@ -49,7 +55,6 @@ public class ActivityProcessImpl implements IActivityProcess {
 
     @Override
     public DrawProcessRes doDrawProcess(DrawProcessReq req) {
-        // 领取活动
         PartakeReq partakeReq = new PartakeReq(req.getUId(), req.getActivityId());
         PartakeRes partakeRes = activityPartake.doPartake(partakeReq);
         if (!Constants.ResponseCode.SUCCESS.getCode().equals(partakeRes.getCode())) {

@@ -69,4 +69,12 @@ public interface IActivityRepository {
      * @return
      */
     boolean alterStatus(Long activityId, Constants.ActivityState currentState, Constants.ActivityState pass);
+
+    /**
+     * 扫描下标大于 startId 且状态为(准备 & 活动中)的活动(只查询 count 个)
+     * @param startId
+     * @param count
+     * @return
+     */
+    List<ActivityVO> scanToDoActivityList(Long startId, Integer count);
 }

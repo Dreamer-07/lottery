@@ -11,6 +11,7 @@ import pers.prover07.lottery.common.Constants;
 import pers.prover07.lottery.common.Result;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
+import pers.prover07.lottery.domain.activity.model.vo.InvoiceVO;
 import pers.prover07.lottery.domain.activity.service.partake.BaseActivityPartake;
 import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
 import pers.prover07.lottery.domain.strategy.repository.IStrategyRepository;
@@ -18,6 +19,7 @@ import pers.prover07.lottery.domain.support.cache.IRedisRepository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -134,5 +136,10 @@ public class ActivityPartakeImpl extends BaseActivityPartake {
     @Override
     public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
         userTakeActivityRepository.updateInvoiceMqState(uId, orderId, mqState);
+    }
+
+    @Override
+    public List<InvoiceVO> scanInvoiceMqState(long startId, Integer count) {
+        return userTakeActivityRepository.scanInvoiceMqState(startId, count);
     }
 }

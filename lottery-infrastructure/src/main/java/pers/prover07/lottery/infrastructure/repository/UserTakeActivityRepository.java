@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import pers.prover07.lottery.common.Constants;
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
+import pers.prover07.lottery.domain.activity.model.vo.InvoiceVO;
 import pers.prover07.lottery.domain.activity.model.vo.UserTakeActivityVO;
 import pers.prover07.lottery.domain.activity.repository.IUserTakeActivityRepository;
 import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
@@ -15,6 +16,9 @@ import pers.prover07.lottery.infrastructure.dao.IUserStrategyExportDao;
 import pers.prover07.lottery.infrastructure.dao.IUserTakeActivityDao;
 import pers.prover07.lottery.infrastructure.po.UserStrategyExport;
 import pers.prover07.lottery.infrastructure.po.UserTakeActivity;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户参与活动仓储接口
@@ -99,6 +103,22 @@ public class UserTakeActivityRepository implements IUserTakeActivityRepository {
                         .eq(UserTakeActivity::getTakeId, takeId)
                         .eq(UserTakeActivity::getState, Constants.TaskState.NO_USED.getCode())
         );
+    }
+
+    @Override
+    public List<InvoiceVO> scanInvoiceMqState(long startId, Integer count) {
+        List<UserTakeActivity> userTakeActivityList = userTakeActivityDao.selectList(Wrappers.<UserTakeActivity>lambdaQuery()
+                .eq(UserTakeActivity::getState, Constants.MQState.FAIL)
+                .gt(UserTakeActivity::getId, startId)
+                .orderByDesc(UserTakeActivity::getId)
+                .last("limit " + count));
+
+        return userTakeActivityList.stream().map((UserTakeActivity userTakeActivity) -> {
+            InvoiceVO invoiceVO = new InvoiceVO();
+            BeanUtils.copyProperties(userTakeActivity, invoiceVO);
+
+            return invoiceVO;
+        }).collect(Collectors.toList());
     }
 
 }

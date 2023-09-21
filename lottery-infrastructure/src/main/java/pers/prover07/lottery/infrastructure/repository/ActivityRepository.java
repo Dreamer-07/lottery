@@ -115,4 +115,20 @@ public class ActivityRepository implements IActivityRepository {
     public boolean alterStatus(Long activityId, Constants.ActivityState currentState, Constants.ActivityState pass) {
         return 1 == activityDao.alterStatus(activityId, currentState.getCode(), pass.getCode());
     }
+
+    @Override
+    public List<ActivityVO> scanToDoActivityList(Long startId, Integer count) {
+        List<Activity> activityList = activityDao.selectList(Wrappers.<Activity>lambdaQuery()
+                .gt(Activity::getId, startId)
+                .in(Activity::getState, Constants.ActivityState.PASS, Constants.ActivityState.DOING)
+                .last("limit " + count)
+                .orderByDesc(Activity::getId));
+
+        return activityList.stream().map((Activity activity) -> {
+            ActivityVO activityVO = new ActivityVO();
+            BeanUtils.copyProperties(activity, activityVO);
+
+            return activityVO;
+        }).collect(Collectors.toList());
+    }
 }

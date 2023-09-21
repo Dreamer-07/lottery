@@ -2,8 +2,11 @@ package pers.prover07.lottery.domain.activity.repository;
 
 import pers.prover07.lottery.domain.activity.model.req.PartakeReq;
 import pers.prover07.lottery.domain.activity.model.vo.ActivityBillVO;
+import pers.prover07.lottery.domain.activity.model.vo.InvoiceVO;
 import pers.prover07.lottery.domain.activity.model.vo.UserTakeActivityVO;
 import pers.prover07.lottery.domain.award.model.vo.DrawOrderVo;
+
+import java.util.List;
 
 /**
  * 用户参与活动仓储接口
@@ -50,4 +53,6 @@ public interface IUserTakeActivityRepository {
      * @return
      */
     int useTakeActivity(String uId, Long activityId, Long takeId);
+
+    List<InvoiceVO> scanInvoiceMqState(long startId, Integer count);
 }
